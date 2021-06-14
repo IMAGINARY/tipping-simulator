@@ -48,7 +48,9 @@
 <button id="turnCounterclockwise"> Counterclockwise </button>
 <br>
 <input type="checkbox" id="trace"> Trace
-
+<br>
+<br>
+d = <span id="d-attr"></span>
 
 <script>
 
@@ -133,7 +135,7 @@ function pathFromDOMPoints(cps){
   d+= (cps[0].x +' '+ cps[0].y +' ');
   for (i=1; i<cps.length; i++){
     if (i%3 == 1) {d+= "C "}
-    d+=(cps[i].x +' '+ cps[i].y +', ')}
+    d+=(cps[i].x +' '+ cps[i].y + ' ')}
   return d;
 };
 
@@ -173,7 +175,9 @@ function draw (){
   var CP1 = [];
   CP.forEach((item, i) => { CP1[i] = new DOMPoint(CP[i][0],CP[i][1]) });
 
-  pth.attr("d",pathFromDOMPoints(CP1))
+  var dAttr = pathFromDOMPoints(CP1);
+  pth.attr("d",dAttr);
+  d3.select("#d-attr").text(dAttr);
 
 }
 
