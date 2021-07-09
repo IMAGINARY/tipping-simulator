@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "d3-save-svg": "^0.0.2"
+  }
+}

@@ -4,7 +4,7 @@
 <head>
 <!-- <script src="node_modules/d3/dist/d3.min.js"> </script> -->
 <script src="https://d3js.org/d3.v6.min.js"></script>
-
+<script src="node_modules/d3-save-svg/build/d3-save-svg.min.js"></script>
 
 <style>
 .auxLines{
@@ -54,12 +54,14 @@ Curve path:
 d = <span id="d-attr"></span>
 <br>
 The circle on those coordinates has center at (0,0) and radius 200.
+<br>
+<svg id="svg2"> </svg>
 
 <script>
 
 // CURVE DESIGN
 
-svg = d3.select("svg")
+svg = d3.select("#svg")
           .attr("width", "1000")
           .attr("height", "500");
 
@@ -203,7 +205,7 @@ function draw (){
   var CP1 = [];
   CP.forEach((item, i) => { CP1[i] = new DOMPoint(CP[i][0],CP[i][1]) });
 
-  var dAttr = pathFromDOMPoints(CP1);
+  dAttr = pathFromDOMPoints(CP1);
   pth.attr("d",dAttr);
   d3.select("#d-attr").text(dAttr);
 
@@ -276,7 +278,8 @@ function drawWheel(){
 
   marble
     .attr("cx",P.x)
-    .attr("cy",P.y-4)
+    .attr("cy",P.y)  //display marble ON the curve
+    //.attr("cy",P.y-4) //display marble over the curve
 
   if (d3.select("#trace").property("checked")) {
         svg.append("circle").attr("class","mainLines").attr("class","trace")
@@ -284,6 +287,10 @@ function drawWheel(){
             .attr("cy",P.y-4)
             .attr("r",4)
         }
+  console.log("-------")
+  console.log("Marble coordinates: ", P);
+  console.log("IndexOfMaxY: ", IndexOfMaxY);
+  console.log("Angle: ", angle);
 }
 
 var timer;
@@ -315,6 +322,69 @@ d3.select("#trace").on("change", ()=>{ d3.selectAll(".trace").remove();} );
 
 //drawWheel();
 
+// Drawing for Design/Carpenters
+svg2 = d3.select("#svg2")
+          .attr("width", "500")
+          .attr("height", "500");
+
+curvegrp2 = svg2.append("g")
+          .attr("transform","translate(250 250)");
+
+curvegrp2.append("circle").attr("class","mainLines")
+          .attr("cx",0)
+          .attr("cy",0)
+          .attr("r",200);
+
+curvegrp2.append("circle").attr("class","mainLines")
+          .attr("cx",0)
+          .attr("cy",0)
+          .attr("r",1);
+
+pth2 = curvegrp2.append("path")
+        .attr("class","mainLines")
+
+tippts_data = [
+  {angle: -96, index: 499, sense: "CCW", label: "A"},
+  {angle: 36, index: 369, sense: "CW", label: "B"},
+  {angle: -222, index: 156, sense: "CCW", label: "C"},
+  {angle: -138, index: 60, sense: "CW", label: "D"},
+]
+
+
+function drawDesign(){
+    pth2.attr("d",dAttr);
+
+    var path = pth2.node();
+    var length = path.getTotalLength();
+
+    tippts = curvegrp2.selectAll(".tippt")
+              .data(tippts_data)
+              .enter()
+              .append("g");
+
+    tippts.append("circle")
+          .attr("class","marble")
+          .attr("r",4)
+          .attr("cx", d => path.getPointAtLength(d.index * length/500).x)
+          .attr("cy", d => path.getPointAtLength(d.index * length/500).y)
+
+    tippts.append("text")
+          .attr("x", d => path.getPointAtLength(d.index * length/500).x)
+          .attr("y", d => path.getPointAtLength(d.index * length/500).y +25)
+          .attr("text-anchor","middle")
+          .text(d => d.label)
+
+    tippts.append("text")
+          .attr("x", d => path.getPointAtLength(d.index * length/500).x)
+          .attr("y", d => path.getPointAtLength(d.index * length/500).y +45)
+          .attr("text-anchor","middle")
+          .text(d => '(' + d.angle + 'º ' + d.sense +')')
+}
+
+function saveSVG() {
+  var config = { filename: 'Curve' };
+  d3_save_svg.save(d3.select('#svg2').node(), config);
+}
 
 </script>
 
