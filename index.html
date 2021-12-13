@@ -56,6 +56,11 @@ d = <span id="d-attr"></span>
 The circle on those coordinates has center at (0,0) and radius 200.
 <br>
 <svg id="svg2"> </svg>
+<br>
+<button id="PlotCurve"> Plot curve </button>
+<button id="ExportCurve"> Export curve </button>
+<br>
+Tipping points are marked on the curve, and labeled sequentially with letters (A,B,C...). The label also contains the angle at which the tipping point is found, and the direction (CW / CCW).
 
 <script>
 
@@ -385,6 +390,10 @@ function saveSVG() {
   var config = { filename: 'Curve' };
   d3_save_svg.save(d3.select('#svg2').node(), config);
 }
+
+
+d3.select("#PlotCurve").on("click",drawDesign);
+d3.select("#ExportCurve").on("click",saveSVG);
 
 </script>
 
